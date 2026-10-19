@@ -25,3 +25,6 @@ models/*.csv
 # --- editor/workbench artifacts (do not commit) ---
 .virtual_documents/
 anaconda_projects/
+
+# --- local conda env export (use requirements.txt instead) ---
+environment.yml
