@@ -20,3 +20,7 @@ models/
 
 # --- jupyter ---
 .ipynb_checkpoints/
+
+# --- editor/workbench artifacts (do not commit) ---
+.virtual_documents/
+anaconda_projects/
