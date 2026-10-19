@@ -45,23 +45,24 @@ with st.sidebar:
     st.header("Borrower profile")
     st.caption("Adjust the inputs to see the score update live.")
 
-    age = st.slider("Age", 18, 95, 45)
-    monthly_income = st.number_input("Monthly income ($)", 0, 100000, 6000, step=100)
-    income_unknown = st.checkbox("Income unknown")
+    age = st.slider("Age", 21, 90, 45)
+    monthly_income = st.number_input("Monthly income ($)", 0, 50000, 6000, step=100)
+    income_unknown = st.checkbox("Income unknown (treat as missing)")
     dependents = st.slider("Number of dependents", 0, 10, 2)
 
     st.subheader("Credit behavior")
-    utilization = st.slider("Credit utilization (0–1+)", 0.0, 1.5, 0.30, step=0.01,
-                            help="Balance ÷ credit limit. Higher = closer to maxed out.")
-    debt_ratio = st.slider("Debt ratio (0–5)", 0.0, 5.0, 0.30, step=0.01,
+    st.caption("Input ranges are limited to what the model saw in training.")
+    utilization = st.slider("Credit utilization", 0.0, 1.09, 0.30, step=0.01,
+                            help="Balance ÷ credit limit. 1.0+ = maxed out / over limit.")
+    debt_ratio = st.slider("Debt ratio", 0.0, 5.0, 0.30, step=0.01,
                            help="Monthly debt payments ÷ monthly income.")
-    open_lines = st.slider("Open credit lines & loans", 0, 40, 8)
-    real_estate = st.slider("Real-estate loans / lines", 0, 10, 1)
+    open_lines = st.slider("Open credit lines & loans", 0, 25, 8)
+    real_estate = st.slider("Real-estate loans / lines", 0, 4, 1)
 
     st.subheader("Delinquency history")
-    d30 = st.slider("Times 30–59 days late", 0, 15, 0)
-    d60 = st.slider("Times 60–89 days late", 0, 15, 0)
-    d90 = st.slider("Times 90+ days late", 0, 15, 0)
+    d30 = st.slider("Times 30–59 days late", 0, 13, 0)
+    d60 = st.slider("Times 60–89 days late", 0, 11, 0)
+    d90 = st.slider("Times 90+ days late", 0, 17, 0)
 
 raw = {
     "RevolvingUtilizationOfUnsecuredLines": utilization,
@@ -81,6 +82,28 @@ pd_score = result["pd"]
 decision = result["decision"]
 threshold = result["threshold"]
 ev = result["expected_value_if_approved"]
+
+# Out-of-distribution check: warn when the profile resembles very few training borrowers
+total_delinq = d30 + d60 + d90
+ood_flags = []
+if total_delinq >= 15:
+    ood_flags.append("very high delinquency (≥15 events)")
+if utilization >= 1.0 and d90 >= 5:
+    ood_flags.append("maxed-out utilization combined with serious delinquency")
+if age <= 21 and total_delinq >= 10:
+    ood_flags.append("very young with extensive delinquency history")
+if open_lines >= 20 and total_delinq >= 10:
+    ood_flags.append("many credit lines combined with many delinquencies")
+
+if ood_flags:
+    st.warning(
+        "⚠️ **Out-of-distribution input.** This combination — "
+        + "; ".join(ood_flags)
+        + " — is extremely rare in the training data (a handful of borrowers in "
+        "150,000). The model has little experience with profiles like this, so treat "
+        "the score below with caution. This is a known limitation of models on rare "
+        "combinations, not a fixed rule."
+    )
 
 c1, c2, c3 = st.columns(3)
 c1.metric("Probability of default", f"{pd_score:.1%}")
