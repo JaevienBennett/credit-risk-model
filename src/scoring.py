@@ -79,14 +79,15 @@ def score_borrower(raw: dict, model="xgboost"):
 
     if model == "xgboost":
         pd_score = float(xgb.predict_proba(X)[:, 1][0])
-        contributions = None
     else:
-        clf = logit.named_steps["clf"]
-        scaler = logit.named_steps["scaler"]
-        z = scaler.transform(X)[0]
         pd_score = float(logit.predict_proba(X)[:, 1][0])
-        contrib = pd.Series(clf.coef_[0] * z, index=features).sort_values(ascending=False)
-        contributions = contrib
+
+    # Feature contributions always come from the interpretable logistic scorecard,
+    # regardless of which model produced the headline PD.
+    clf = logit.named_steps["clf"]
+    scaler = logit.named_steps["scaler"]
+    z = scaler.transform(X)[0]
+    contributions = pd.Series(clf.coef_[0] * z, index=features).sort_values(ascending=False)
 
     threshold = PROFIT_ON_GOOD / (PROFIT_ON_GOOD + LOSS_ON_DEFAULT)
     decision = "APPROVE" if pd_score < threshold else "DECLINE"
