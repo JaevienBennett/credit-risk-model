@@ -62,6 +62,15 @@ credit-risk-model/
 6. **Business impact** — cost-sensitive threshold selection, expected loss, and a simple
    approve/decline policy with dollar framing.
 
+## Interactive demo
+
+Try the model live — adjust a borrower profile and see the PD, decision, and reasons:
+
+```bash
+conda activate credit-risk
+streamlit run app/streamlit_app.py
+```
+
 ## Reproduce
 
 ```bash
