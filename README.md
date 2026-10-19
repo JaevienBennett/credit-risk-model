@@ -6,6 +6,10 @@ probability-of-default (PD) model and the business decisions that follow from it
 
 **Author:** _your name_ · **Stack:** Python, pandas, scikit-learn, XGBoost, Jupyter
 
+> **TL;DR:** A gradient-boosted model predicts loan default with **AUC 0.87 / KS 0.58**,
+> and the resulting approve/decline policy is worth **~$3.9M** more than approving everyone
+> on a held-out 30,000-loan portfolio — with explainable per-borrower decisions.
+
 ---
 
 ## Why this project
@@ -37,9 +41,12 @@ credit-risk-model/
 │   ├── 02_eda.ipynb
 │   ├── 03_feature_engineering.ipynb
 │   ├── 04_modeling.ipynb
-│   └── 05_evaluation_business_impact.ipynb
+│   └── 05_business_impact.ipynb
 ├── src/                # reusable functions imported by notebooks
-├── reports/figures/    # exported charts
+├── reports/
+│   ├── figures/        # exported charts
+│   └── SUMMARY.md      # plain-English write-up
+├── models/             # saved models (gitignored)
 ├── requirements.txt
 └── README.md
 ```
@@ -65,8 +72,51 @@ jupyter lab
 
 ## Results
 
-_TBD — filled in as notebooks are completed._
+Trained on 120,000 borrowers, evaluated on a **held-out** 30,000 (stratified 80/20 split).
+Default rate in both sets: **6.68%**.
+
+| Model | Test AUC | Test KS |
+|---|---|---|
+| Logistic Regression (baseline) | 0.863 | 0.571 |
+| **XGBoost (chosen)** | **0.870** | **0.583** |
+
+**What drives default** (by model importance): prior delinquency — especially
+`total_past_due` and `has_any_delinq` — followed by credit utilization. The top predictors
+are the **domain features we engineered**, confirming the feature work paid off. This matches
+the EDA: one 90+ day delinquency lifts the default rate from ~4.6% to **41%**.
+
+**Business impact.** Treating each approved good loan as **+$1,500** profit and each approved
+default as **−$6,000** loss (illustrative, $10k exposure × 60% LGD), the profit-maximizing
+cutoff is **PD ≈ 0.74**:
+
+| Policy | Approved | Expected profit |
+|---|---|---|
+| Approve everyone | 30,000 | $29.96M |
+| Model @ optimal cutoff | 27,014 | **$33.85M** |
+
+➡️ The model-based policy adds **≈ $3.9M** of expected profit versus approving everyone on
+just this 30,000-loan test portfolio — while catching the highest-risk borrowers. A logistic
+**scorecard** provides per-borrower reason codes for explainable declines.
+
+| Chart | What it shows |
+|---|---|
+| ![ROC](reports/figures/model_roc.png) | Model separation (AUC) |
+| ![Profit curve](reports/figures/impact_profit_curve.png) | Optimal approval cutoff |
+| ![Policies](reports/figures/impact_policy_comparison.png) | Dollar value of the policy |
+
+See **[reports/SUMMARY.md](reports/SUMMARY.md)** for the plain-English walkthrough.
+
+## Key decisions (and why)
+
+- **Imbalanced target (~6.7%)** → used `class_weight` / `scale_pos_weight` and judged on
+  **AUC / KS / PR-AUC**, never accuracy.
+- **Sentinel codes (96/98)** in delinquency columns → treated as missing **and flagged**
+  (the flag preserves signal), then imputed as 0.
+- **Missing income (~20%)** → median imputation **plus a missing-indicator** feature, because
+  missingness itself is informative.
+- **Extreme outliers** (utilization up to 50,000) → winsorized at the 1st/99th percentile.
+- **Leakage control** → all fitting (scaling, imputation medians) done on training folds only.
 
 ## Status
 
-🚧 In progress.
+✅ Complete — end-to-end pipeline, models, evaluation, and business-impact analysis.
