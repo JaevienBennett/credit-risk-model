@@ -1,0 +1,22 @@
+# --- data (do not commit raw or large files) ---
+data/raw/
+data/processed/
+*.csv
+
+# --- secrets / local ---
+.env
+.DS_Store
+
+# --- python ---
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+*.egg-info/
+
+# --- models / artifacts ---
+models/
+*.pkl
+*.joblib
+
+# --- jupyter ---
+.ipynb_checkpoints/
