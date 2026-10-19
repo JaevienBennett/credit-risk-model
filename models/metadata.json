@@ -1,0 +1,44 @@
+{
+  "features": [
+    "RevolvingUtilizationOfUnsecuredLines",
+    "age",
+    "NumberOfTime30-59DaysPastDueNotWorse",
+    "DebtRatio",
+    "MonthlyIncome",
+    "NumberOfOpenCreditLinesAndLoans",
+    "NumberOfTimes90DaysLate",
+    "NumberRealEstateLoansOrLines",
+    "NumberOfTime60-89DaysPastDueNotWorse",
+    "NumberOfDependents",
+    "had_sentinel_delinq",
+    "income_missing",
+    "total_past_due",
+    "has_any_delinq",
+    "income_per_dependent",
+    "credit_lines_per_age",
+    "is_high_util"
+  ],
+  "target": "SeriousDlqin2yrs",
+  "test_metrics": {
+    "logistic": {
+      "model": "Logistic Regression",
+      "auc": 0.8625733843637023,
+      "ks": 0.5708082000749154
+    },
+    "xgboost": {
+      "model": "XGBoost",
+      "auc": 0.8701495145864576,
+      "ks": 0.58278834081077
+    }
+  },
+  "cv_auc": {
+    "logistic": 0.856626489314183,
+    "xgboost": 0.8623964868169194
+  },
+  "calibration": {
+    "mean_pd_raw": 0.3221692144870758,
+    "mean_pd_calibrated": 0.06721406436316041,
+    "brier_raw": 0.142361581325531,
+    "brier_calibrated": 0.04891236267478394
+  }
+}

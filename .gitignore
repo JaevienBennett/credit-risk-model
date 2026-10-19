@@ -14,9 +14,10 @@ __pycache__/
 *.egg-info/
 
 # --- models / artifacts ---
-models/
+# The deployed Streamlit app needs the fitted models, so they ARE committed.
 *.pkl
-*.joblib
+!models/*.joblib
+models/*.csv
 
 # --- jupyter ---
 .ipynb_checkpoints/
