@@ -74,8 +74,7 @@ streamlit run app/streamlit_app.py
 ## Reproduce
 
 ```bash
-conda env create -f environment.yml   # or: pip install -r requirements.txt
-conda activate credit-risk
+pip install -r requirements.txt
 jupyter lab
 ```
 
@@ -95,8 +94,8 @@ are the **domain features we engineered**, confirming the feature work paid off.
 the EDA: one 90+ day delinquency lifts the default rate from ~4.6% to **41%**.
 
 **Business impact.** Treating each approved good loan as **+$1,500** profit and each approved
-default as **−$6,000** loss (illustrative, $10k exposure × 60% LGD), the profit-maximizing
-cutoff is **PD ≈ 0.74**:
+default as **−$6,000** loss (illustrative, $10k exposure × 60% LGD), the theoretical breakeven
+PD is **0.20** (`1500 / (1500 + 6000)`) and the empirical profit-maximizing cutoff is **PD ≈ 0.19**:
 
 | Policy | Approved | Expected profit |
 |---|---|---|
