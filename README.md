@@ -1,10 +1,12 @@
 # Credit Risk Model — Predicting Consumer Loan Default
 
+[![Tests](https://github.com/JaevienBennett/credit-risk-model/actions/workflows/tests.yml/badge.svg)](https://github.com/JaevienBennett/credit-risk-model/actions/workflows/tests.yml)
+
 An end-to-end credit risk analytics project: from raw borrower data to a validated
 probability-of-default (PD) model and the business decisions that follow from it
 (approve/decline thresholds, expected loss, and pricing).
 
-**Author:** _your name_ · **Stack:** Python, pandas, scikit-learn, XGBoost, Jupyter
+**Author:** Jaevien Bennett · **Stack:** Python, pandas, scikit-learn, XGBoost, Jupyter
 
 > **TL;DR:** A gradient-boosted model predicts loan default with **AUC 0.87 / KS 0.58**,
 > and the resulting approve/decline policy is worth **~$3.9M** more than approving everyone
