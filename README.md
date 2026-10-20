@@ -44,11 +44,14 @@ credit-risk-model/
 │   ├── 03_feature_engineering.ipynb
 │   ├── 04_modeling.ipynb
 │   └── 05_business_impact.ipynb
-├── src/                # reusable functions imported by notebooks
+├── src/                # reusable scoring logic (imported by the app)
+├── app/                # Streamlit demo app
+├── tests/              # pytest suite for src/scoring.py
 ├── reports/
 │   ├── figures/        # exported charts
 │   └── SUMMARY.md      # plain-English write-up
-├── models/             # saved models (gitignored)
+├── models/             # trained model artifacts (.joblib, committed)
+├── .github/workflows/  # CI (runs the test suite on push/PR)
 ├── requirements.txt
 └── README.md
 ```
