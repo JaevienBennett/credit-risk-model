@@ -122,3 +122,12 @@ class TestScoreBorrower:
         result = score_borrower(borrower())
         assert RESULT_KEYS.issubset(result.keys())
         assert isinstance(result["contributions"], pd.Series)
+
+    def test_served_threshold_matches_metadata(self):
+        result = score_borrower(borrower())
+        meta = json.loads((ROOT / "models" / "metadata.json").read_text())
+        assert result["threshold"] == meta["decision_threshold"]["served"] == 0.19
+
+    def test_winsorize_clips_out_of_range_utilization(self):
+        out = build_features(borrower({"RevolvingUtilizationOfUnsecuredLines": 50000}))
+        assert out["RevolvingUtilizationOfUnsecuredLines"].iloc[0] == 1.093

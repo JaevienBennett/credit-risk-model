@@ -21,7 +21,8 @@ st.set_page_config(page_title="Credit Risk Scorer", page_icon="🏦", layout="wi
 
 @st.cache_resource
 def _warm_cache():
-    # Load models once on startup (first score_borrower call triggers it)
+    # Load artifacts once on startup. scoring.load_artifacts() is itself
+    # lru_cached, so this call primes that cache for the whole session.
     score_borrower({
         "RevolvingUtilizationOfUnsecuredLines": 0.3, "age": 45,
         "NumberOfTime30-59DaysPastDueNotWorse": 0, "DebtRatio": 0.3,
@@ -117,8 +118,9 @@ else:
 
 st.progress(min(pd_score, 1.0), text=f"Risk score: {pd_score:.1%}")
 st.caption(
-    f"Cutoff = {threshold:.0%} (theoretical breakeven from "
-    f"+${PROFIT_ON_GOOD:,} profit per good loan vs. −${LOSS_ON_DEFAULT:,} per default)."
+    f"Cutoff = {threshold:.0%} — empirical profit optimum from the test-set profit "
+    f"curve (+${PROFIT_ON_GOOD:,} per good loan vs. −${LOSS_ON_DEFAULT:,} per default; "
+    f"theoretical breakeven would be 20%)."
 )
 
 st.divider()
@@ -141,7 +143,7 @@ with right:
 - **Model:** XGBoost, isotonic-calibrated so predicted PDs match observed default rates.
 - **Ranking skill:** test AUC **0.87**, KS **0.58**.
 - **Decision rule:** approve while expected profit is positive
-  (cutoff ≈ **{threshold:.0%}**).
+  (empirical-optimum cutoff ≈ **{threshold:.0%}**; theoretical breakeven 20%).
 - **Top drivers:** prior delinquency, credit utilization, debt ratio.
 
 *Dollar assumptions are illustrative. Swap in real pricing/risk appetite and the

@@ -25,10 +25,15 @@
       "auc": 0.8625733843637023,
       "ks": 0.5708082000749154
     },
-    "xgboost": {
-      "model": "XGBoost",
+    "xgboost_raw": {
+      "model": "XGBoost (raw, scale_pos_weight)",
       "auc": 0.8701495145864576,
       "ks": 0.58278834081077
+    },
+    "xgboost_calibrated": {
+      "model": "XGBoost (isotonic-calibrated, served)",
+      "auc": 0.867056,
+      "ks": 0.579265
     }
   },
   "cv_auc": {
@@ -40,5 +45,15 @@
     "mean_pd_calibrated": 0.06721406436316041,
     "brier_raw": 0.142361581325531,
     "brier_calibrated": 0.04891236267478394
+  },
+  "decision_threshold": {
+    "empirical_optimum": 0.19,
+    "theoretical_breakeven": 0.2,
+    "served": 0.19,
+    "note": "empirical optimum from notebook 05 profit curve; theoretical breakeven = 1500/(1500+6000)"
+  },
+  "winsorize_bounds": {
+    "RevolvingUtilizationOfUnsecuredLines": {"lower": 0.0, "upper": 1.093},
+    "DebtRatio": {"lower": 0.0, "upper": 4977.0}
   }
 }
