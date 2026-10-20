@@ -49,7 +49,7 @@ Applying the profit-maximizing cutoff to a 30,000-loan test portfolio:
 | Policy | Expected profit |
 |---|---|
 | Approve everyone | $29.96M |
-| **Model-based policy** | **$33.85M** |
+| **Model-based policy** | **$33.81M** |
 
 ➡️ **The model adds ~$3.9 million** in expected profit — by saying no to the borrowers
 whose risk of default outweighs the profit they'd bring.

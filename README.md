@@ -100,7 +100,7 @@ PD is **0.20** (`1500 / (1500 + 6000)`) and the empirical profit-maximizing cuto
 | Policy | Approved | Expected profit |
 |---|---|---|
 | Approve everyone | 30,000 | $29.96M |
-| Model @ optimal cutoff | 27,014 | **$33.85M** |
+| Model @ optimal cutoff (0.19) | 27,137 | **$33.81M** |
 
 ➡️ The model-based policy adds **≈ $3.9M** of expected profit versus approving everyone on
 just this 30,000-loan test portfolio — while catching the highest-risk borrowers. A logistic
@@ -123,7 +123,9 @@ See **[reports/SUMMARY.md](reports/SUMMARY.md)** for the plain-English walkthrou
 - **Missing income (~20%)** → median imputation **plus a missing-indicator** feature, because
   missingness itself is informative.
 - **Extreme outliers** (utilization up to 50,000) → winsorized at the 1st/99th percentile.
-- **Leakage control** → all fitting (scaling, imputation medians) done on training folds only.
+- **Leakage control** → model scaling is fit in-pipeline on training folds only.
+  Imputation medians and winsorize bounds are computed on the full dataset before the
+  split (a small, acknowledged leak — noted as a deliberate simplification).
 
 ## Status
 
