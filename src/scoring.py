@@ -39,10 +39,17 @@ def build_features(raw: dict) -> pd.DataFrame:
         df[c] = df[c].where(df[c] < 96)
     df[DELINQ_COLS] = df[DELINQ_COLS].fillna(0)
 
-    # Income missingness flag + median imputation
-    df["income_missing"] = df["MonthlyIncome"].isnull().astype(int)
-    df["MonthlyIncome"] = df["MonthlyIncome"].fillna(TRAIN_DEFAULT_MEDIAN_INCOME)
-    df["NumberOfDependents"] = df["NumberOfDependents"].fillna(0)
+    # Income missingness flag + median imputation.
+    # Cast to numeric first: a None value makes the column object-dtype, which
+    # fillna leaves as object and XGBoost refuses to score (this crashed the
+    # "Income unknown" path in the app). The flag is derived from the numeric
+    # column so non-numeric input is treated as missing too.
+    income_numeric = pd.to_numeric(df["MonthlyIncome"], errors="coerce")
+    df["income_missing"] = income_numeric.isnull().astype(int)
+    df["MonthlyIncome"] = income_numeric.fillna(TRAIN_DEFAULT_MEDIAN_INCOME)
+    df["NumberOfDependents"] = pd.to_numeric(
+        df["NumberOfDependents"], errors="coerce"
+    ).fillna(0)
 
     # Domain features
     df["total_past_due"] = df[DELINQ_COLS].sum(axis=1)

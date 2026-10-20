@@ -9,3 +9,4 @@ seaborn>=0.13
 jupyter>=1.0
 ipykernel>=6.0
 streamlit>=1.30
+pytest>=8.0
